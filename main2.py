@@ -35,6 +35,7 @@ def multi_stage_angle_clustering(df: pd.DataFrame, dataset_name: str) -> np.ndar
         new_df[f'{k+1}_angle'] = theta_k
     
     new_df.drop(columns=original_dim_cols, inplace=True)
+    new_df.drop(columns=['id'], inplace=True)
     print(new_df)
 
     cluster_counts = 4 * n_dimensions - 1
