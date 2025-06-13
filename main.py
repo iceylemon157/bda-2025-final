@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from typing import Tuple
 
@@ -55,7 +56,7 @@ def multi_stage_angle_clustering(df: pd.DataFrame, dataset_name: str) -> Tuple[n
 
         theta_k = np.arctan2(y_vals, x_vals)
 
-        kmeans_angle = KMeans(n_clusters=n_dimensions + 1, 
+        kmeans_angle = GaussianMixture(n_components=n_dimensions + 1, 
                            random_state=RANDOM_STATE, 
                            n_init=10)
         
@@ -73,8 +74,8 @@ def multi_stage_angle_clustering(df: pd.DataFrame, dataset_name: str) -> Tuple[n
         plt.figure(figsize=(8, 6))
         plt.scatter(theta_k, np.random.randn(len(theta_k)), s=0.1)
         plt.title(f"Clustering of Angles for Dimensions {dim_k_col} and {dim_k_plus_1_col}")
-        plt.xlabel(f"cos(theta) for {dim_k_col}")
-        plt.ylabel(f"sin(theta) for {dim_k_plus_1_col}")
+        plt.xlabel(f"Theta")
+        plt.ylabel(f"Random Value for Visualization")
         plt.grid()
         plt.savefig(f"plots/{dataset_name}/angle_clustering_{dim_k_col}_{dim_k_plus_1_col}.png")
         plt.close()
