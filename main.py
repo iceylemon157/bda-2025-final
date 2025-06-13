@@ -13,6 +13,28 @@ RANDOM_STATE = 157
 np.random.seed(RANDOM_STATE)
 
 
+def data_transformation(df: pd.DataFrame) -> pd.DataFrame:
+    feature_cols = [col for col in df.columns if col != 'id']
+    feature_cols_numeric = sorted([int(col) for col in feature_cols])
+    original_dim_cols = [str(col) for col in feature_cols_numeric]
+    n_dimensions = len(original_dim_cols)
+    new_df = df.copy()
+    for k in range(n_dimensions - 1):
+        dim_k_col = original_dim_cols[k]
+        dim_k_plus_1_col = original_dim_cols[k+1]
+
+        x_vals = df[dim_k_col].values
+        x_vals = x_vals.astype(float)
+        y_vals = df[dim_k_plus_1_col].values
+        y_vals = y_vals.astype(float)
+
+        theta_k = np.arctan2(y_vals, x_vals)
+        new_df[f'{k+1}_angle'] = theta_k
+    
+    new_df.drop(columns=original_dim_cols, inplace=True)
+    return new_df
+
+
 def multi_stage_angle_clustering(df: pd.DataFrame, dataset_name: str) -> Tuple[np.ndarray, int]:
     feature_cols = [col for col in df.columns if col != 'id']
     feature_cols_numeric = sorted([int(col) for col in feature_cols])
@@ -98,16 +120,17 @@ def multi_stage_angle_clustering(df: pd.DataFrame, dataset_name: str) -> Tuple[n
     top_clusters_idx = cluster_counts.nlargest(top_n_clusters).index
     top_clusters_idx = top_clusters_idx.astype(int)
 
-    clustered_data = df.copy()
+    transformed_df = data_transformation(df)
+    clustered_data = transformed_df.copy()
     clustered_data['global_cluster_id'] = global_cluster_ids
     clustered_data = clustered_data[clustered_data['global_cluster_id'].isin(top_clusters_idx)]
 
-    centroids = df[original_dim_cols].groupby(global_cluster_ids).mean().loc[top_clusters_idx].values
+    centroids = transformed_df.drop(columns=['id']).groupby(global_cluster_ids).mean().loc[top_clusters_idx].values
 
     global_cluster_ids = global_cluster_ids.astype(int)
-    for idx, row in df.iterrows():
+    for idx, row in transformed_df.iterrows():
         if row['id'] not in clustered_data['id'].values:
-            distances = np.linalg.norm(centroids - row[original_dim_cols].values, axis=1)
+            distances = np.linalg.norm(centroids - row.drop('id').values, axis=1)
             nearest_centroid_idx = np.argmin(distances)
             global_cluster_ids[idx] = top_clusters_idx[int(nearest_centroid_idx)]
 

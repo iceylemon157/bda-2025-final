@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 from typing import Tuple
 
@@ -39,7 +40,7 @@ def multi_stage_angle_clustering(df: pd.DataFrame, dataset_name: str) -> np.ndar
     print(new_df)
 
     cluster_counts = 4 * n_dimensions - 1
-    kmeans_angle = KMeans(n_clusters=cluster_counts, random_state=RANDOM_STATE, n_init=10)
+    kmeans_angle = GaussianMixture(n_components=cluster_counts, random_state=RANDOM_STATE, n_init=10)
     labels = kmeans_angle.fit_predict(new_df.values)
 
     return labels
