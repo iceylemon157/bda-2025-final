@@ -1,16 +1,28 @@
-# Final-Project-Big-Data
+# BDA 2025 Final
 
-## CSV Format
-**public_submission.csv**
+資工三 詹挹辰 B11902057
+
+## Environment
+
+- Python 3.9.6
+- Required packages:
+  - `numpy`
+  - `pandas`
+  - `scikit-learn`
+  - `matplotlib`
+
+## Usage
+
+Run `main.py` to generate the submission file.
+
+```bash
+python main.py
 ```
-id,label
-1,0
-2,0
-...
+
+This script will generate `public_submission.csv` and `private_submission.csv` files in the current directory. Also, it will plot the graphs of the data and save to `plots/` directory.
+
+There is also another script `eda.py`, which will generate the feature pairs plots. You can run it with:
+
+```bash
+python eda.py
 ```
-
-
-## How to grade?
-1. Modify `public_submission.csv`.
-2. Push your file to this repository (`git push`).
-3. Wait for the outcome of git action.
